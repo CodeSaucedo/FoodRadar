@@ -16,7 +16,9 @@ FoodRadar is my attempt to learn how to create, update, and maintain a web-servi
 
 I am planning on learning a few things with this project:
 1. Markdown (evidently, since I will use .md for logging my journey)
-2. Java SpringBoot framework, since it looks like something fun
+2. React+Vite framework, since it looks like something fun
 3. SQLite (in order to relearn database schemas and commands)
-4. React (so I can make it look pretty :D )
+4. Typescript for the backend since I am using React
 
+## What's next?
+Feel free to use this project as a way to learn with me or if you want to host the project yourself I will eventually create instructions on how to do so!
