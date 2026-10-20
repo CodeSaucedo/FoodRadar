@@ -1,24 +1,32 @@
-# What is FoodRadar
+# React + TypeScript + Vite
 
-FoodRadar is my attempt to learn how to create, update, and maintain a web-service and update it on feedback from users.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-## Some background
+Currently, two official plugins are available:
 
-<p>I struggle with decision-making very much when it comes to picking a place out to eat. So instead of struggling with it everyday, <br>I decided to <b>create a web-app that would be accessible via desktop/mobile</b> for it.<br><br> The web-app would use my own home location and use a database of<br> places I have handpicked and choose a random one based on certain criteria:</p>
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-1. It would allow me to put a range of money I want to spend
+## React Compiler
 
-2. It would allow me to dictate how many people I plan on bringing
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-3. It would show me the distance/traffic in <b>real-time</b> before sending me to Google Maps so that I can navigate there immmediatley
+## Expanding the Oxlint configuration
 
-## What I plan to achieve after making this project
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
 
-I am planning on learning a few things with this project:
-1. Markdown (evidently, since I will use .md for logging my journey)
-2. React+Vite framework, since it looks like something fun
-3. SQLite (in order to relearn database schemas and commands)
-4. Typescript for the backend since I am using React
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
+```
 
-## What's next?
-Feel free to use this project as a way to learn with me or if you want to host the project yourself I will eventually create instructions on how to do so!
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
