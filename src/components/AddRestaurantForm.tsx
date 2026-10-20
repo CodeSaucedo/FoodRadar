@@ -66,8 +66,9 @@ export default function AddRestaurantForm({
       onSubmit={handleSubmit}
       style={{
         display: "flex",
-        gap: "0.5rem",
-        marginBottom: "2rem",
+        flexDirection: "column",
+        gap: "0.75rem",
+        marginBottom: "0.5rem",
       }}
     >
       <input
@@ -80,9 +81,13 @@ export default function AddRestaurantForm({
         required
         style={{
           flex: 1,
-          padding: "0.75rem",
+          padding: "1.00rem",
+          gap: "0.5rem"
         }}
       />
+      
+      <br></br>
+      <button>bruh</button>
 
       <button disabled={loading}>
         {loading

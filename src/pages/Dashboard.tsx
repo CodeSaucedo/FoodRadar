@@ -65,30 +65,32 @@ export default function Dashboard({ session }: DashboardProps) {
       <br></br>
       <br></br>
 
-<button 
+  <button 
   onClick={() => setIsModalOpen(true)}
   style={{ marginBottom: "1rem", padding: "1.0rem 1rem", cursor: "pointer" }}
 >
   ➕ Add New Restaurant
-</button>
+  </button>
 
-    <AddRestaurantModal
+  <AddRestaurantModal
   userId={session.user.id}
   onAdded={loadRestaurants}
   isOpen={isModalOpen}
   onClose={() => setIsModalOpen(false)}
 >
-        <AddRestaurantForm
+  <AddRestaurantForm
     userId={session.user.id}
      onAdded={loadRestaurants}
     />
+  <br></br>
+
   <button 
   onClick={() => setIsModalOpen(false)}
   style={{ marginBottom: "1rem", padding: "0.5rem 1rem", cursor: "pointer" }}
 >
   ➕ Cancel
 </button>
-</AddRestaurantModal>
+  </AddRestaurantModal>
 
       <hr />
 
