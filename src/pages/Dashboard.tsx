@@ -5,6 +5,7 @@ import { supabase } from "../lib/supabase";
 import type { Restaurant } from "../types/database";
 
 import AddRestaurantForm from "../components/AddRestaurantForm";
+import AddRestaurantModal from "../components/AddRestaurantModal";
 type DashboardProps = {
   session: Session;
 };
@@ -12,6 +13,7 @@ type DashboardProps = {
 export default function Dashboard({ session }: DashboardProps) {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   async function loadRestaurants() {
     setLoading(true);
@@ -55,14 +57,38 @@ export default function Dashboard({ session }: DashboardProps) {
         Logged in as: <strong>{session.user.email}</strong>
       </p>
 
+      <br></br>
+
       <button onClick={() => supabase.auth.signOut()}>
         Log Out
       </button>
+      <br></br>
+      <br></br>
 
-      <AddRestaurantForm
+<button 
+  onClick={() => setIsModalOpen(true)}
+  style={{ marginBottom: "1rem", padding: "1.0rem 1rem", cursor: "pointer" }}
+>
+  ➕ Add New Restaurant
+</button>
+
+    <AddRestaurantModal
+  userId={session.user.id}
+  onAdded={loadRestaurants}
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+>
+        <AddRestaurantForm
     userId={session.user.id}
      onAdded={loadRestaurants}
     />
+  <button 
+  onClick={() => setIsModalOpen(false)}
+  style={{ marginBottom: "1rem", padding: "0.5rem 1rem", cursor: "pointer" }}
+>
+  ➕ Cancel
+</button>
+</AddRestaurantModal>
 
       <hr />
 
