@@ -13,24 +13,44 @@ export default function AddRestaurantForm({
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(
-    e: React.FormEvent
-  ) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     setLoading(true);
 
+    // 1. Fetch live coordinates from the client browser session
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          await invokeAddRestaurantEdge(latitude, longitude);
+        },
+        async (geoError) => {
+          console.warn("Geolocation blocked or failed. Sending without bias:", geoError.message);
+          // Fallback: Invoke without coordinates if user blocks permissions
+          await invokeAddRestaurantEdge(null, null);
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    } else {
+      // Fallback for older browsers
+      await invokeAddRestaurantEdge(null, null);
+    }
+  }
+
+  // 2. Helper to bundle payload data and cleanly trigger the Edge Function pipeline
+  async function invokeAddRestaurantEdge(userLat: number | null, userLng: number | null) {
     try {
-            const { data, error } =
-        await supabase.functions.invoke(
-          "add-restaurant",
-          {
-            body: {
-              googleMapsUrl: url,
-              userId,
-            },
-          }
-        );
+      const { data, error } = await supabase.functions.invoke(
+        "add-restaurant",
+        {
+          body: {
+            googleMapsUrl: url,
+            userId,
+            userLat, // ✅ Sent to your backend script's locationBias block
+            userLng, // ✅ Sent to your backend script's locationBias block
+          },
+        }
+      );
 
       console.log("DATA:", data);
       console.log("ERROR:", error);
@@ -39,24 +59,20 @@ export default function AddRestaurantForm({
         throw error;
       }
 
-      console.log(
-        "Function response:",
-        data
-      );
-
+      console.log("Function response:", data);
       setUrl("");
       onAdded();
 
     } catch (err: any) {
-  console.error("FULL ERROR:", err);
+      console.error("FULL ERROR:", err);
 
-  if (err.context) {
-    const errorBody = await err.context.json();
-    console.error("EDGE FUNCTION ERROR:", errorBody);
-  }
+      if (err.context) {
+        const errorBody = await err.context.json();
+        console.error("EDGE FUNCTION ERROR:", errorBody);
+      }
 
-  alert(err.message);
-  } finally {
+      alert(err.message);
+    } finally {
       setLoading(false);
     }
   }
@@ -75,9 +91,7 @@ export default function AddRestaurantForm({
         type="url"
         placeholder="Paste Google Maps link..."
         value={url}
-        onChange={(e) =>
-          setUrl(e.target.value)
-        }
+        onChange={(e) => setUrl(e.target.value)}
         required
         style={{
           flex: 1,
@@ -86,13 +100,18 @@ export default function AddRestaurantForm({
         }}
       />
       
-      <br></br>
-      <button>bruh</button>
+      <button 
+        type="button"
+        onClick={() => setUrl("")}
+      >
+        bruh  
+      </button>
 
-      <button disabled={loading}>
-        {loading
-          ? "Saving..."
-          : "Save Restaurant"}
+      <button 
+        type="submit"
+        disabled={loading}
+      >
+        {loading ? "Saving..." : "Save Restaurant"}
       </button>
     </form>
   );

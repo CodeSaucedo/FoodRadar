@@ -5,4 +5,5 @@ export type Restaurant = {
   google_maps_url: string;
   image_url: string | null;
   created_at: string;
+  distance_meters?: number
 };
