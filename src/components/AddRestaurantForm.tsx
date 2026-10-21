@@ -11,13 +11,22 @@ export default function AddRestaurantForm({
   onAdded,
 }: Props) {
   const [url, setUrl] = useState("");
+  const [descText, setText] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // 1. Define character limit metrics
+  const MAX_LIMIT = 200;
+  const isTooLong = descText.length > MAX_LIMIT;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    
+    // Prevent submission if the field is in an error state
+    if (isTooLong) return;
+
     setLoading(true);
 
-    // 1. Fetch live coordinates from the client browser session
+    // Fetch live coordinates from the client browser session
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -26,18 +35,15 @@ export default function AddRestaurantForm({
         },
         async (geoError) => {
           console.warn("Geolocation blocked or failed. Sending without bias:", geoError.message);
-          // Fallback: Invoke without coordinates if user blocks permissions
           await invokeAddRestaurantEdge(null, null);
         },
         { enableHighAccuracy: true, timeout: 5000 }
       );
     } else {
-      // Fallback for older browsers
       await invokeAddRestaurantEdge(null, null);
     }
   }
 
-  // 2. Helper to bundle payload data and cleanly trigger the Edge Function pipeline
   async function invokeAddRestaurantEdge(userLat: number | null, userLng: number | null) {
     try {
       const { data, error } = await supabase.functions.invoke(
@@ -46,8 +52,9 @@ export default function AddRestaurantForm({
           body: {
             googleMapsUrl: url,
             userId,
-            userLat, // ✅ Sent to your backend script's locationBias block
-            userLng, // ✅ Sent to your backend script's locationBias block
+            userLat, 
+            userLng,
+            description: descText
           },
         }
       );
@@ -61,6 +68,7 @@ export default function AddRestaurantForm({
 
       console.log("Function response:", data);
       setUrl("");
+      setText(""); // Clear description on successful add
       onAdded();
 
     } catch (err: any) {
@@ -85,7 +93,6 @@ export default function AddRestaurantForm({
         flexDirection: "column",
         gap: "0.75rem",
         marginBottom: "0.5rem",
-        
       }}
     >
       <input
@@ -95,22 +102,54 @@ export default function AddRestaurantForm({
         onChange={(e) => setUrl(e.target.value)}
         required
         style={{
-          flex: 1,
           padding: "1.00rem",
-          gap: "0.5rem"
         }}
       />
-      
-      <button 
-        type="button"
-        onClick={() => setUrl("")}
-      >
-        bruh  
-      </button>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+        <input
+          type="text"
+          placeholder="Describe the spot! (200 characters or less)"
+          value={descText}
+          onChange={(e) => setText(e.target.value)}
+          required
+          // Remove native maxLength so users can continue typing/pasting
+          aria-invalid={isTooLong}
+          style={{
+            padding: "1.00rem",
+            border: isTooLong ? "2px solid #dc3545" : "1px solid #ccc",
+            outline: "none"
+          }}
+        />
+        
+        {/* Footer info containing counter metrics and warnings */}
+        <div style={{ 
+          display: "flex", 
+          justifyContent: "space-between", 
+          fontSize: "0.85rem",
+          padding: "0 0.25rem" 
+        }}>
+          <span style={{ color: isTooLong ? "#dc3545" : "#666" }}>
+            {descText.length} / {MAX_LIMIT} characters
+          </span>
+          
+          {isTooLong && (
+            <span role="alert" style={{ color: "#dc3545", fontWeight: "bold" }}>
+              ⚠️ Too long by {descText.length - MAX_LIMIT} characters!
+            </span>
+          )}
+        </div>
+      </div>
 
       <button 
         type="submit"
-        disabled={loading}
+        disabled={loading || isTooLong} // Disable button if loading OR input length is invalid
+        style={{
+          padding: "0.75rem",
+          cursor: (loading || isTooLong) ? "not-allowed" : "pointer",
+          backgroundColor: isTooLong ? "#e0e0e0" : "",
+          color: isTooLong ? "#a1a1a1" : ""
+        }}
       >
         {loading ? "Saving..." : "Save Restaurant"}
       </button>

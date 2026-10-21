@@ -188,53 +188,66 @@ export default function Dashboard({ session }: DashboardProps) {
               />
               
               {/* Text content area with unified padding */}
-              <div style={{ padding: "1.25rem", flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <div>
-                  <strong style={{ fontSize: "1.2rem", color: "#333", display: "block", marginBottom: "0.25rem" }}>
-                    {restaurant.name}
-                  </strong>
-                  
-                  {/* ✅ Renders live distance badge when location calculation succeeds */}
-                  {restaurant.distance_meters !== undefined && (
-                    <div style={{ color: "#666", fontSize: "0.9rem", marginBottom: "1rem" }}>
-                      {formatDistance(restaurant.distance_meters)}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Actions Bar layout at the bottom of the card */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1rem" }}>
-                  <a
-                    href={restaurant.google_maps_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ 
-                      color: "#0066cc", 
-                      textDecoration: "none", 
-                      fontSize: "0.95rem",
-                      fontWeight: "500" 
-                    }}
-                  >
-                    🗺️ Open Maps
-                  </a>
+<div style={{ padding: "1.25rem", flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+  <div>
+    <strong style={{ fontSize: "1.2rem", color: "#333", display: "block", marginBottom: "0.25rem" }}>
+      {restaurant.name}
+    </strong>
+    
+    {/* ✅ Renders live distance badge when location calculation succeeds */}
+    {restaurant.distance_meters !== undefined && (
+      <div style={{ color: "#666", fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+        {formatDistance(restaurant.distance_meters)}
+      </div>
+    )}
 
-                  <button
-                    onClick={() => deleteRestaurant(restaurant.id)}
-                    style={{ 
-                      backgroundColor: "transparent",
-                      border: "none",
-                      color: "#cc0000",
-                      cursor: "pointer",
-                      fontSize: "0.95rem",
-                      fontWeight: "500",
-                      padding: "0.25rem 0.5rem",
-                      borderRadius: "4px"
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+    {/* Elegant render block for your database descriptions */}
+    {restaurant.description && (
+      <p style={{ 
+        color: "#555", 
+        fontSize: "0.95rem", 
+        lineHeight: "1.4", 
+        margin: "0.5rem 0 0 0",
+        whiteSpace: "pre-wrap" // Keeps paragraphs/linebreaks intact if pasted
+      }}>
+        {restaurant.description}
+      </p>
+    )}
+  </div>
+  
+  {/* Actions Bar layout at the bottom of the card */}
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1rem" }}>
+    <a
+      href={restaurant.google_maps_url}
+      target="_blank"
+      rel="noreferrer"
+      style={{ 
+        color: "#0066cc", 
+        textDecoration: "none", 
+        fontSize: "0.95rem",
+        fontWeight: "500" 
+      }}
+    >
+      🗺️ Open Maps
+    </a>
+
+    <button
+      onClick={() => deleteRestaurant(restaurant.id)}
+      style={{ 
+        backgroundColor: "transparent",
+        border: "none",
+        color: "#cc0000",
+        cursor: "pointer",
+        fontSize: "0.95rem",
+        fontWeight: "500",
+        padding: "0.25rem 0.5rem",
+        borderRadius: "4px"
+      }}
+    >
+      Delete
+    </button>
+  </div>
+</div>
             </li>
           ))}
         </ul>

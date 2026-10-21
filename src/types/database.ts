@@ -6,4 +6,5 @@ export type Restaurant = {
   image_url: string | null;
   created_at: string;
   distance_meters?: number
+  description?: string
 };
