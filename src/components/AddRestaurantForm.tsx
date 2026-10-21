@@ -85,6 +85,7 @@ export default function AddRestaurantForm({
         flexDirection: "column",
         gap: "0.75rem",
         marginBottom: "0.5rem",
+        
       }}
     >
       <input

@@ -49,7 +49,7 @@ export default function Dashboard({ session }: DashboardProps) {
           await fetchFallbackRestaurants();
           setLoading(false);
         },
-        { enableHighAccuracy: true, timeout: 5000 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     } else {
       // 3. Fallback for older browsers without geolocation support
@@ -101,7 +101,7 @@ export default function Dashboard({ session }: DashboardProps) {
   };
 
   return (
-    <main style={{ padding: "2rem" }}>
+    <main style={{ padding: "2rem", fontFamily: "system-ui, sans-serif", backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
       <h2>FoodRadar Dashboard</h2>
 
       <p>
@@ -143,7 +143,7 @@ export default function Dashboard({ session }: DashboardProps) {
         </button>
       </AddRestaurantModal>
 
-      <hr />
+      <hr style={{ border: "0", borderTop: "1px solid #eee", margin: "2rem 0" }} />
 
       <h3>Your Restaurants</h3>
 
@@ -152,48 +152,89 @@ export default function Dashboard({ session }: DashboardProps) {
       ) : restaurants.length === 0 ? (
         <p>No restaurants saved yet.</p>
       ) : (
-        <ul style={{ listStyleType: "none", padding: 0 }}>
+        <ul style={{ 
+          listStyleType: "none", 
+          padding: 0,
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gap: "2rem"
+        }}
+        >
           {restaurants.map((restaurant) => (
-            <li key={restaurant.id} style={{ marginBottom: "2rem", maxWidth: "400px" }}>
+            <li 
+              key={restaurant.id} 
+              style={{ 
+                width: "100%",
+                backgroundColor: "#ffffff",
+                border: "1px solid #e0e0e0",
+                borderRadius: "12px",
+                overflow: "hidden",
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)",
+                display: "flex",
+                flexDirection: "column"
+              }}
+            >
               <img
                 src={
                   restaurant.image_url ||
-                  "https://via.placeholder.com/600x400?text=No+Image"
+                  "https://placeholder.com"
                 }
                 alt={restaurant.name}
                 style={{
                   width: "100%",
-                  height: "200px",
+                  height: "180px",
                   objectFit: "cover",
-                  borderRadius: "8px",
                 }}
               />
-              <br />
-              <strong style={{ fontSize: "1.2rem" }}>{restaurant.name}</strong>
               
-              {/* ✅ Renders live distance badge when location calculation succeeds */}
-              {restaurant.distance_meters !== undefined && (
-                <div style={{ color: "#666", fontSize: "0.9rem", margin: "0.2rem 0" }}>
-                  {formatDistance(restaurant.distance_meters)}
+              {/* Text content area with unified padding */}
+              <div style={{ padding: "1.25rem", flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <div>
+                  <strong style={{ fontSize: "1.2rem", color: "#333", display: "block", marginBottom: "0.25rem" }}>
+                    {restaurant.name}
+                  </strong>
+                  
+                  {/* ✅ Renders live distance badge when location calculation succeeds */}
+                  {restaurant.distance_meters !== undefined && (
+                    <div style={{ color: "#666", fontSize: "0.9rem", marginBottom: "1rem" }}>
+                      {formatDistance(restaurant.distance_meters)}
+                    </div>
+                  )}
                 </div>
-              )}
-              
-              <br />
-              <a
-                href={restaurant.google_maps_url}
-                target="_blank"
-                rel="noreferrer"
-                style={{ marginRight: "1rem" }}
-              >
-                Open Maps
-              </a>
+                
+                {/* Actions Bar layout at the bottom of the card */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1rem" }}>
+                  <a
+                    href={restaurant.google_maps_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ 
+                      color: "#0066cc", 
+                      textDecoration: "none", 
+                      fontSize: "0.95rem",
+                      fontWeight: "500" 
+                    }}
+                  >
+                    🗺️ Open Maps
+                  </a>
 
-              <button
-                onClick={() => deleteRestaurant(restaurant.id)}
-                style={{ cursor: "pointer" }}
-              >
-                Delete
-              </button>
+                  <button
+                    onClick={() => deleteRestaurant(restaurant.id)}
+                    style={{ 
+                      backgroundColor: "transparent",
+                      border: "none",
+                      color: "#cc0000",
+                      cursor: "pointer",
+                      fontSize: "0.95rem",
+                      fontWeight: "500",
+                      padding: "0.25rem 0.5rem",
+                      borderRadius: "4px"
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
